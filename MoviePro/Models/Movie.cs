@@ -36,4 +36,4 @@ namespace MoviePro.Models
         public ICollection<Crew> Crew { get; set; } = new HashSet<Crew>();  //Creates a Foreign Key                                                                 
 
     }
-}
+}                                                                                                                         
