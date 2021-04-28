@@ -9,6 +9,8 @@ namespace MoviePro.Models
     public class Crew
     {
         public int Id { get; set; }
+
+        [Display(Name = "MovieId")]
         public int MovieId { get; set; }
 
         //TMDB crewId used to identify crew across movies
@@ -22,6 +24,9 @@ namespace MoviePro.Models
         [Display(Name = "Profile Pic")] //Data Format
         public byte[] Poster { get; set; } //Profile Pic
         public string ContentType { get; set; } //to display Profile Pic
+
+
+        public Movie Movie { get; set; }
 
     }
 }

@@ -26,7 +26,10 @@ namespace MoviePro.Controllers
         // GET: Crews
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Crew.ToListAsync());
+            var model = await _context.Crew
+                .Include(c => c.Movie)
+                .ToListAsync();
+            return View(model);
         }
 
         // GET: Crews/Details/5
@@ -38,6 +41,7 @@ namespace MoviePro.Controllers
             }
 
             var crew = await _context.Crew
+                .Include(c => c.Movie)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (crew == null)
             {
@@ -50,6 +54,7 @@ namespace MoviePro.Controllers
         // GET: Crews/Create
         public IActionResult Create()
         {
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title");
             return View();
         }
 
@@ -70,6 +75,7 @@ namespace MoviePro.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", crew.MovieId);
             return View(crew);
         }
 
@@ -86,6 +92,7 @@ namespace MoviePro.Controllers
             {
                 return NotFound();
             }
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", crew.MovieId);
             return View(crew);
         }
 
@@ -127,6 +134,7 @@ namespace MoviePro.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", crew.MovieId);
             return View(crew);
         }
 

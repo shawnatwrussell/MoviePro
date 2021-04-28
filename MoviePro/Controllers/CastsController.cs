@@ -26,7 +26,10 @@ namespace MoviePro.Controllers
         // GET: Casts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cast.ToListAsync());
+            var model = await _context.Cast
+                .Include(c => c.Movie)
+                .ToListAsync();
+            return View(model);
         }
 
         // GET: Casts/Details/5
@@ -38,7 +41,8 @@ namespace MoviePro.Controllers
             }
 
             var cast = await _context.Cast
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .Include(c => c.Movie)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (cast == null)
             {
                 return NotFound();
@@ -50,6 +54,10 @@ namespace MoviePro.Controllers
         // GET: Casts/Create
         public IActionResult Create()
         {
+            
+            
+            
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title");
             return View();
         }
 
@@ -58,7 +66,7 @@ namespace MoviePro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,MovieId,CastId,Department,Name,Character,Order")] Cast cast, IFormFile Poster)
+        public async Task<IActionResult> Create([Bind("Id,MovieId,CastId,Department,Name,Character,Order")] Cast cast, IFormFile Poster)
         {
             if (ModelState.IsValid)
             {
@@ -69,6 +77,7 @@ namespace MoviePro.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", cast.MovieId);
             return View(cast);
         }
 
@@ -85,6 +94,7 @@ namespace MoviePro.Controllers
             {
                 return NotFound();
             }
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", cast.MovieId);
             return View(cast);
         }
 
@@ -93,9 +103,9 @@ namespace MoviePro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,MovieId,CastId,Department,Name,Character,Order,Poster,ContentType")] Cast cast, IFormFile NewPoster)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MovieId,CastId,Department,Name,Character,Order,Poster,ContentType")] Cast cast, IFormFile NewPoster)
         {
-            if (id != cast.ID)
+            if (id != cast.Id)
             {
                 return NotFound();
             }
@@ -115,7 +125,7 @@ namespace MoviePro.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CastExists(cast.ID))
+                    if (!CastExists(cast.Id))
                     {
                         return NotFound();
                     }
@@ -126,6 +136,7 @@ namespace MoviePro.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", cast.MovieId);
             return View(cast);
         }
 
@@ -138,7 +149,7 @@ namespace MoviePro.Controllers
             }
 
             var cast = await _context.Cast
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (cast == null)
             {
                 return NotFound();
@@ -160,7 +171,7 @@ namespace MoviePro.Controllers
 
         private bool CastExists(int id)
         {
-            return _context.Cast.Any(e => e.ID == id);
+            return _context.Cast.Any(e => e.Id == id);
         }
     }
 }
