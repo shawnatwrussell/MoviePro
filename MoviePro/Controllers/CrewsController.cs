@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MoviePro.Data;
 using MoviePro.Models;
+using MoviePro.Services;
 
-namespace MoviePro
+namespace MoviePro.Controllers
 {
     public class CrewsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IImageService _imageService;
 
-        public CrewsController(ApplicationDbContext context)
+        public CrewsController(ApplicationDbContext context, IImageService imageService)
         {
             _context = context;
+            _imageService = imageService;
         }
 
         // GET: Crews
@@ -54,10 +58,14 @@ namespace MoviePro
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MovieId,CrewId,Department,Name,Job,Profile,ContentType")] Crew crew)
+        public async Task<IActionResult> Create([Bind("Id,MovieId,CrewId,Department,Name,Job")] Crew crew, IFormFile Poster)
         {
             if (ModelState.IsValid)
             {
+                crew.ContentType = _imageService.RecordContentType(Poster);
+                crew.Poster = await _imageService.EncodePosterAsync(Poster);
+
+
                 _context.Add(crew);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +94,7 @@ namespace MoviePro
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MovieId,CrewId,Department,Name,Job,Profile,ContentType")] Crew crew)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MovieId,CrewId,Department,Name,Job,Poster,ContentType")] Crew crew, IFormFile NewPoster)
         {
             if (id != crew.Id)
             {
@@ -97,6 +105,12 @@ namespace MoviePro
             {
                 try
                 {
+                    if (NewPoster is not null)
+                    {
+                        crew.ContentType = _imageService.RecordContentType(NewPoster);
+                        crew.Poster = await _imageService.EncodePosterAsync(NewPoster);
+                    }
+
                     _context.Update(crew);
                     await _context.SaveChangesAsync();
                 }

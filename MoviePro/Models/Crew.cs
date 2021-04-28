@@ -20,7 +20,7 @@ namespace MoviePro.Models
 
         //Profile Image
         [Display(Name = "Profile Pic")] //Data Format
-        public byte[] Profile { get; set; } //Profile Pic
+        public byte[] Poster { get; set; } //Profile Pic
         public string ContentType { get; set; } //to display Profile Pic
 
     }

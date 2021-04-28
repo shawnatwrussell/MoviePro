@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MoviePro.Data;
 using MoviePro.Models;
+using MoviePro.Services;
 
 namespace MoviePro.Controllers
 {
     public class CastsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IImageService _imageService;
 
-        public CastsController(ApplicationDbContext context)
+        public CastsController(ApplicationDbContext context, IImageService imageService)
         {
             _context = context;
+            _imageService = imageService;
         }
 
         // GET: Casts
@@ -54,10 +58,13 @@ namespace MoviePro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,MovieId,CastId,Department,Name,Character,Order,Profile,ContentType")] Cast cast)
+        public async Task<IActionResult> Create([Bind("ID,MovieId,CastId,Department,Name,Character,Order")] Cast cast, IFormFile Poster)
         {
             if (ModelState.IsValid)
             {
+                cast.ContentType = _imageService.RecordContentType(Poster);
+                cast.Poster = await _imageService.EncodePosterAsync(Poster);
+
                 _context.Add(cast);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +93,7 @@ namespace MoviePro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,MovieId,CastId,Department,Name,Character,Order,Profile,ContentType")] Cast cast)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,MovieId,CastId,Department,Name,Character,Order,Poster,ContentType")] Cast cast, IFormFile NewPoster)
         {
             if (id != cast.ID)
             {
@@ -97,6 +104,12 @@ namespace MoviePro.Controllers
             {
                 try
                 {
+                    if (NewPoster is not null)
+                    {
+                        cast.ContentType = _imageService.RecordContentType(NewPoster);
+                        cast.Poster = await _imageService.EncodePosterAsync(NewPoster);
+                    }
+
                     _context.Update(cast);
                     await _context.SaveChangesAsync();
                 }
