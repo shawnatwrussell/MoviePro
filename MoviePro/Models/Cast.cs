@@ -26,6 +26,7 @@ namespace MoviePro.Models
         public byte[] Poster { get; set; }
         public string ContentType { get; set; }
 
+
         public Movie Movie { get; set; }
 
 

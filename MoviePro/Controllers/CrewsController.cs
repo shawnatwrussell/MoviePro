@@ -63,7 +63,7 @@ namespace MoviePro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MovieId,CrewId,Department,Name,Job")] Crew crew, IFormFile Poster)
+        public async Task<IActionResult> Create([Bind("Id,MovieId,CrewId,Department,Name,Job,IMDB")] Crew crew, IFormFile Poster)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +101,7 @@ namespace MoviePro.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MovieId,CrewId,Department,Name,Job,Poster,ContentType")] Crew crew, IFormFile NewPoster)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MovieId,CrewId,Department,Name,Job,IMDB,Poster,ContentType")] Crew crew, IFormFile NewPoster)
         {
             if (id != crew.Id)
             {

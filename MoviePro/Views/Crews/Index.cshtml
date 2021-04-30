@@ -1,54 +1,62 @@
 ﻿@model IEnumerable<MoviePro.Models.Crew>
 
+@using MoviePro.Services
+@inject IImageService _imageService
+
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>CREW</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Department)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Job)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Movie)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Department)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Job)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Movie.Title)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<!--CARDS SECTION-->
+<div class="card-deck">
+    @foreach (var crew in Model)
+    {
+        <div class="col-6">
+            <div class="card shadow p-3 mb-5 bg-white rounded">
+                <img class="card-img-top" src="@_imageService.DecodePoster(crew.Poster, crew.ContentType)" alt="Card image cap" />
+                <div class="card-body">
+                    <h4 class="card-title">@crew.Name</h4>
+                    <p class="card-text">@crew.Job</p>
+                    <a asp-action="Edit" asp-route-id="@crew.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@crew.Id">Delete</a>
+                </div>
+                <div class="card-footer">
+                    <button data-toggle="modal" data-target="#modal-@crew.Id" class="btn btn-primary">@crew.Name</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!--MODAL SECTION-->
+@foreach (var crew in Model)
+{
+    <div class="modal fade" id="modal-@crew.Id" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@crew.Name</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body align-content-center">
+                    <img class="card-img-top" src="@_imageService.DecodePoster(crew.Poster, crew.ContentType)" alt="Card image cap" />
+                    <p>@crew.Job</p>
+
+                    <a asp-action="Edit" asp-route-id="@crew.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@crew.Id">Delete</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

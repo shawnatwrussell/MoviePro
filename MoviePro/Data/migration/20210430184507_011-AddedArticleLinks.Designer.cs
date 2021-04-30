@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MoviePro.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MoviePro.data.migration
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210430184507_011-AddedArticleLinks")]
+    partial class _011AddedArticleLinks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,6 +238,9 @@ namespace MoviePro.data.migration
                     b.Property<string>("Department")
                         .HasColumnType("text");
 
+                    b.Property<string>("IMDB")
+                        .HasColumnType("text");
+
                     b.Property<int>("MovieId")
                         .HasColumnType("integer");
 
@@ -269,6 +274,9 @@ namespace MoviePro.data.migration
                         .HasColumnType("integer");
 
                     b.Property<string>("Department")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IMDB")
                         .HasColumnType("text");
 
                     b.Property<string>("Job")
@@ -328,6 +336,9 @@ namespace MoviePro.data.migration
                         .HasColumnType("text");
 
                     b.Property<string>("Trailer")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Wikipedia")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<MoviePro.Models.Movie>
 
+@using MoviePro.Services
+@inject IImageService _imageService
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -7,54 +10,58 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="text-white" asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TagLine)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Overview)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trailer)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
 
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TagLine)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Overview)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trailer)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<!--CARDS SECTION-->
+<div class="card-deck">
+    @foreach (var movie in Model)
+    {
+        <div class="col-4">
+            <div class="card shadow p-3 mb-5 bg-white rounded">
+                <img class="card-img-top" src="@_imageService.DecodePoster(movie.Poster, movie.ContentType)" alt="Card image cap" />
+                <div class="card-body">
+                    <h5 class="card-title align-center">@movie.Title</h5>
+                    <p class="card-text align-center">@movie.TagLine</p>
+                    <a asp-action="Edit" asp-route-id="@movie.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@movie.Id">Delete</a>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button data-toggle="modal" data-target="#modal-@movie.Id" class="btn btn-primary align-content-end">@movie.Title</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!--MODAL SECTION-->
+@foreach (var movie in Model)
+{
+    <!--MOVIE OVERVIEW/DETAILS-->
+    <div class="modal fade" id="modal-@movie.Id" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@movie.Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img class="card-img-top" src="@_imageService.DecodePoster(movie.Poster, movie.ContentType)" alt="Card image cap" />
+                    <p>@movie.Overview</p>
+                    <p>@movie.ReleaseDate.ToString("yyyy MMMM")</p>
+                    <p>@movie.Rating</p>
+                    <a asp-action="Edit" asp-route-id="@movie.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@movie.Id">Delete</a>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-primary" href="@movie.Trailer" role="button" target="_blank">Trailer</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--EDIT-->
 }
-    </tbody>
-</table>

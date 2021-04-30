@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using MoviePro.Enums;
 
 namespace MoviePro.Models
 {
@@ -31,6 +32,10 @@ namespace MoviePro.Models
         //Public URL of Trailer
         [Display(Name  = "Trailer URL")]
         public string Trailer { get; set; }
+
+        //init the list ahead of the inserts
+
+        public MovieRating Rating { get; set; }
 
         public ICollection<Cast> Cast { get; set; } = new HashSet<Cast>();  //Creates a Foreign Key
         public ICollection<Crew> Crew { get; set; } = new HashSet<Crew>();  //Creates a Foreign Key                                                                 
